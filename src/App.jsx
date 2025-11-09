@@ -1,23 +1,36 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Box, Typography } from '@mui/material';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthProvider'; // Changed import
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { Dashboard } from './pages/Dashboard';
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            minHeight: '100vh' 
-          }}>
-            <Typography variant="h3" color="primary">
-              🚀 Link Bio Builder - Setup Complete!
-            </Typography>
-          </Box>
-        } />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          {/* Redirect root to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          {/* Auth routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          
+          {/* Protected routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* 404 - we'll add this later */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
